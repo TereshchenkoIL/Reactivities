@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect} from 'react';
+import React, { Fragment, useEffect } from 'react';
 import './styles.css';
 import { Container } from 'semantic-ui-react';
 import NavBar from './NavBar';
@@ -16,46 +16,48 @@ import LoginForm from '../../features/users/LoginForm';
 import { useStore } from '../stores/store';
 import LoadingComponent from './LoadingComponents';
 import ModalContainer from '../common/modals/ModalContainer';
+import ProfilePage from '../../features/profiles/ProfilePage';
 
 function App() {
   const location = useLocation();
-  const {commonStore, userStore} = useStore();
+  const { commonStore, userStore } = useStore();
 
-  useEffect(() =>{
-    if(commonStore.token){
+  useEffect(() => {
+    if (commonStore.token) {
       userStore.getUser().finally(() => commonStore.setAppLoaded())
     } else {
       commonStore.setAppLoaded();
     }
   }, [commonStore, userStore]);
 
-  if(!commonStore.appLoaded) return<LoadingComponent content='Loading app' />
+  if (!commonStore.appLoaded) return <LoadingComponent content='Loading app' />
 
   return (
     <>
-    <ToastContainer position='bottom-right' hideProgressBar />
-    <ModalContainer />
-    <Route path='/' exact component={HomePage} />
-    <Route path={'/(.+)'}
-      render={() => (
-      <>
-      <NavBar />
-      <Container style={{marginTop:'7em'}}>
-        <Switch>  
-            <Route path='/activities' exact component={ActivityDashboard} />
-            <Route path='/activities/:id' component={ActivityDetails} />
-            <Route key={location.key} path={['/createActivity', '/manage/:id']} component={ActivityForm} />     
-            <Route path='/errors' component={TestErrors} />
-            <Route path='/server-error' component={ServerError} />
-            <Route path='/login' component={LoginForm} />
-            <Route component={NotFound} />
-          </Switch>
-      </Container>
-      </>
-    )}/>
-      
-     
-     
+      <ToastContainer position='bottom-right' hideProgressBar />
+      <ModalContainer />
+      <Route path='/' exact component={HomePage} />
+      <Route path={'/(.+)'}
+        render={() => (
+          <>
+            <NavBar />
+            <Container style={{ marginTop: '7em' }}>
+              <Switch>
+                <Route path='/activities' exact component={ActivityDashboard} />
+                <Route path='/activities/:id' component={ActivityDetails} />
+                <Route key={location.key} path={['/createActivity', '/manage/:id']} component={ActivityForm} />
+                <Route path='/errors' component={TestErrors} />
+                <Route path='/server-error' component={ServerError} />
+                <Route path='/login' component={LoginForm} />
+                <Route path='/profiles/:username' component={ProfilePage} />
+                <Route component={NotFound} />
+              </Switch>
+            </Container>
+          </>
+        )} />
+
+
+
     </>
   );
 }
