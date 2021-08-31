@@ -3,6 +3,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using API.DTO;
 using API.Services;
+using Application.Interfaces;
+using AutoMapper;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -23,9 +25,11 @@ namespace API.Controllers
         public AccountController(UserManager<AppUser> userManager, 
             SignInManager<AppUser> signInManager, TokenService tokenService)
         {
+       
             _tokenService = tokenService;
             _signInManager = signInManager;
             _userManager = userManager;
+
         }
 
         [HttpPost("login")]
@@ -41,7 +45,6 @@ namespace API.Controllers
             {
                 return CreateUserObject(user);
             }
-
             return Unauthorized();
         }
 
@@ -84,6 +87,7 @@ namespace API.Controllers
                 DisplayName = user.DisplayName,
                 Image = user?.Photos.FirstOrDefault(x => x.IsMain)?.Url,
                 Token = _tokenService.CreateToken(user),
+                Bio = user.Bio,
                 Username = user.UserName
             };
         }
@@ -97,6 +101,7 @@ namespace API.Controllers
 
             return CreateUserObject(user);
         }
+
         
     }
 }

@@ -21,3 +21,7 @@ export interface Photo{
     isMain: boolean
 
 }
+export interface ProfileUpdateData{
+    displayName?: string;
+    bio?: string;
+}

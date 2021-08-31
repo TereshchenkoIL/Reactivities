@@ -13,12 +13,14 @@ import AcctivityDetailedInfo from "./ActivityDetailedInfo";
 export default observer(function ActivityDetails() {
 
     const { activityStore } = useStore();
-    const { selectedActivity: activity, loadActivity, loadingInitial } = activityStore;
+    const { selectedActivity: activity, loadActivity, loadingInitial, clearSelectedActivity } = activityStore;
     const { id } = useParams<{ id: string }>();
 
     useEffect(() => {
         if (id) loadActivity(id)
-    }, [id, loadActivity])
+
+        return () => clearSelectedActivity();
+    }, [id, loadActivity, clearSelectedActivity])
 
     console.log(activity)
     if (loadingInitial || !activity) return <LoadingComponent content='' />;
@@ -28,7 +30,7 @@ export default observer(function ActivityDetails() {
             <Grid.Column width={10}>
                 <AcctivityDetailedHeader activity={activity} />
                 <AcctivityDetailedInfo activity={activity} />
-                <AcctivityDetailedChat />
+                <AcctivityDetailedChat activityId={activity.id} />
             </Grid.Column>
             <Grid.Column width={6}>
                 <AcctivityDetailedSidebar activity={activity} />
