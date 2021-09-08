@@ -20,7 +20,7 @@ export default observer(function ProfilePage() {
             setActiveTab(0);
         }
 
-    }, [loadProfile, username])
+    }, [loadProfile, setActiveTab, username])
 
     if (loadingProfile) return <LoadingComponent content='Loading profile ...' />
 
