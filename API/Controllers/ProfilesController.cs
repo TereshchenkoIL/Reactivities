@@ -27,6 +27,15 @@ namespace API.Controllers
                 Bio = userUpdateDto.Bio
             }));
         }
-        
+
+        [HttpGet("{username}/activities")]
+        public async Task<IActionResult> GetActivities(string username,[FromQuery] string predicate)
+        {
+            return HandleResult(await Mediator.Send(new Activities.Query
+            {
+                Predicate = predicate,
+                Username = username
+            }));
+        }
     }
 }

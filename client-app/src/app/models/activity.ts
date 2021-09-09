@@ -44,3 +44,10 @@ export class ActivityFormValues{
         }
     }
 }
+
+export class ProfileActivity{
+    activityId: string = '';
+    title: string = '';
+    category: string='';
+    date: Date | null = null;
+}

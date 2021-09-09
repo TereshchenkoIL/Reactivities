@@ -1,5 +1,6 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 import agent from "../api/agent";
+import { ProfileActivity } from "../models/activity";
 import { Photo, Profile, ProfileUpdateData } from "../models/profile";
 import { store } from "./store";
 
@@ -11,7 +12,10 @@ export default class ProfileStore{
     deleting = false;
     followings: Profile[] = [];
     loadingFollowings: boolean = false;
+    loadingActivities: boolean = false;
     activeTab = 0;
+    activityTab = -1;
+    activities: ProfileActivity[] = [];
 
     constructor(){
         makeAutoObservable(this);
@@ -27,10 +31,47 @@ export default class ProfileStore{
                 this.followings = [];
             }
         })
+
+        reaction(
+            () => this.activityTab,
+            activityTab=> {
+            if(activityTab === 0)
+            {
+                this.loadActivities(this.profile!.username, "future");
+            }
+            else if(activityTab === 1 ){
+                this.loadActivities(this.profile!.username, "past");
+            }
+            else if(activityTab === 2 ){
+                this.loadActivities(this.profile!.username, "hosting");
+            }
+            else {
+                this.followings = [];
+            }
+        })
+    }
+
+    loadActivities = async (username: string, predicate: string) => {
+        try{
+            this.loadingActivities = true;
+            this.activities = await agent.Profiles.getActivities(username, predicate)
+
+            runInAction(() => {
+                this.loadingActivities = false;
+            });
+        } catch(error){
+            console.log(error)
+            runInAction(() => {
+                this.loadingActivities = false;
+            });
+        }
     }
 
     setActiveTab = (activeTab: any) => {
         this.activeTab = activeTab;
+    }
+    setActivityTab = (activityTab: any) => {
+        this.activityTab = activityTab;
     }
 
     get isCurrentUser(){
@@ -46,10 +87,12 @@ export default class ProfileStore{
         this.loadingProfile = true;
         try {
             const profile = await agent.Profiles.get(username);
+            
             runInAction(() => {
                 this.profile = profile;
                 this.loadingProfile = false;
             })
+            this.loadActivities(this.profile!.username, "future");
         } catch (error) {
             console.log(error);
             runInAction(() => this.loadingProfile = false);
